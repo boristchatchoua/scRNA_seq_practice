@@ -1,0 +1,85 @@
+"0","library(Seurat)"
+"2","Attaching SeuratObject
+"
+"2","
+Attaching package: ‘Seurat’
+
+"
+"2","The following object is masked from ‘package:SummarizedExperiment’:
+
+    Assays
+
+"
+"0","library(dplyr)"
+"2","
+Attaching package: ‘dplyr’
+
+"
+"2","The following object is masked from ‘package:matrixStats’:
+
+    count
+
+"
+"2","The following object is masked from ‘package:Biobase’:
+
+    combine
+
+"
+"2","The following objects are masked from ‘package:GenomicRanges’:
+
+    intersect, setdiff, union
+
+"
+"2","The following object is masked from ‘package:GenomeInfoDb’:
+
+    intersect
+
+"
+"2","The following objects are masked from ‘package:IRanges’:
+
+    collapse, desc, intersect, setdiff, slice, union
+
+"
+"2","The following objects are masked from ‘package:S4Vectors’:
+
+    first, intersect, rename, setdiff, setequal, union
+
+"
+"2","The following objects are masked from ‘package:BiocGenerics’:
+
+    combine, intersect, setdiff, union
+
+"
+"2","The following objects are masked from ‘package:stats’:
+
+    filter, lag
+
+"
+"2","The following objects are masked from ‘package:base’:
+
+    intersect, setdiff, setequal, union
+
+"
+"0","library(patchwork)"
+"0","library(Matrix)"
+"2","
+Attaching package: ‘Matrix’
+
+"
+"2","The following object is masked from ‘package:S4Vectors’:
+
+    expand
+
+"
+"0","library(celldex)"
+"0","library(SingleR)"
+"2","
+Attaching package: ‘SingleR’
+
+"
+"2","The following objects are masked from ‘package:celldex’:
+
+    BlueprintEncodeData, DatabaseImmuneCellExpressionData, HumanPrimaryCellAtlasData,
+    ImmGenData, MonacoImmuneData, MouseRNAseqData, NovershternHematopoieticData
+
+"

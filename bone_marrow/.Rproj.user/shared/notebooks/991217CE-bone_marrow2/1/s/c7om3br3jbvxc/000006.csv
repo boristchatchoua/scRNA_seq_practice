@@ -1,0 +1,4 @@
+"0","# plot variable features with and without labels"
+"0","plot1 <- VariableFeaturePlot(bone_mrw)"
+"0","plot2 <- LabelPoints(plot = plot1, points = top10, repel = TRUE, xnudge = 0, ynudge = 0)"
+"0","plot1"

@@ -1,0 +1,12 @@
+"0","# classification is done using NovershternHematopoieticData from celldex"
+"0","ref <- NovershternHematopoieticData()"
+"2","snapshotDate(): 2020-04-27
+"
+"2","see ?SingleR and browseVignettes('SingleR') for documentation
+"
+"2","loading from cache
+"
+"2","see ?SingleR and browseVignettes('SingleR') for documentation
+"
+"2","loading from cache
+"

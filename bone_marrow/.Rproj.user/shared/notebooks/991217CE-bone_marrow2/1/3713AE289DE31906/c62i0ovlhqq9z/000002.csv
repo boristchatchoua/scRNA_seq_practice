@@ -1,0 +1,50 @@
+"0",""
+"0","bone_mrw <- ScaleData(bone_mrw) %>%"
+"0","  RunPCA()"
+"2","Centering and scaling data matrix
+"
+"2","  |                                                                                       "
+"2","  |                                                                                 |   0%"
+"2","  |                                                                                       "
+"2","  |========================================                                         |  50%"
+"2","  |                                                                                       "
+"2","  |=================================================================================| 100%"
+"2","
+"
+"2","PC_ 1 
+Positive:  BPGM, IFIT1B, KRT1, IL32, S100A12, S100A8, CXCL8, TYROBP, TMCC2, AC245427.1 
+	   S100A9, DUSP2, AC058791.1, CCL5, S100A11, JUN, AC109326.1, RBP7, ATP2B1-AS1, SELENOM 
+	   COTL1, FCN1, VCAN, CTSS, KLRB1, AQP9, CLEC7A, GZMA, MNDA, LGALS1 
+Negative:  PCLAF, TUBB, TYMS, HMGB2, BIRC5, HIST1H4C, HMGB1, CENPU, CENPF, HMGA1 
+	   PCNA, CKS1B, TK1, ZWINT, HMGB1P5, RRM2, STMN1, DUT, NME4, HMGB3 
+	   SMC4, CCNB2, RAN, DHFR, CDKN3, NUSAP1, TPX2, SMC2, TOP2A, PRC1 
+PC_ 2 
+Positive:  AHSP, SLC25A37, HBM, HBD, SLC4A1, CA1, HEMGN, GYPB, GYPA, HMBS 
+	   BPGM, TSPO2, RHCE, BLVRB, PRDX2, RHAG, SMIM1, CA2, KLF1, CR1L 
+	   TMEM56, TRIM10, EIF1AY, RHD, SLC2A1, H1F0, MYL4, RFESD, SMIM5, CAT 
+Negative:  VIM, ACTG1, MT-CO2, RPL23, RPL37A, MT-ND1, MT-CO3, CST3, PTMA, AIF1 
+	   CTSS, AC073861.1, S100A6, LST1, SAT1, LGALS1, TYROBP, COTL1, CSTA, S100A11 
+	   FCER1G, FCN1, RPS17, HLA-DRA, AP1S2, HNRNPA1, LYZ, CD74, MNDA, RPS2 
+PC_ 3 
+Positive:  RPSA, RPL5, NPM1, RPSAP19, AC073861.1, RPLP0, EEF1B2, RPL7A, RPL4, HNRNPA1 
+	   LDHB, RPL7AP6, JUN, AC026403.1, IL32, RPL7AP30, RPS17, RPL37A, AC245427.1, PEBP1 
+	   HMGN1, EEF1B2P3, RPL23, CTSW, LRRC75A-AS1, HSPA8, CD79B, HSP90AB1, CD79A, PTMA 
+Negative:  S100A9, S100A8, FCN1, CSTA, CXCL8, CST3, S100A12, LST1, MNDA, CLEC7A 
+	   LYZ, VCAN, TYROBP, CD14, LGALS1, AIF1, SERPINA1, KLF4, LGALS2, S100A11 
+	   FCER1G, CTSS, ATP2B1-AS1, PSAP, CFD, TYMP, GRN, MS4A6A, CFP, RBP7 
+PC_ 4 
+Positive:  VPREB3, CD79B, CD24, IGHM, CD79A, TCL1A, VPREB1, HLA-DRA, IGLL1, EBF1 
+	   SOX4, CD9, CD74, FAM129C, TCF4, SPIB, GNG7, CMTM8, CD72, HLA-DPB1 
+	   PCDH9, MIR5195, ARPP21, IGLC5, MME, RUBCNL, BCL7A, POU2AF1, HLA-DPA1, HLA-DRB1 
+Negative:  FAM178B, S100A6, CNRIP1, EPCAM, APOC1, CTSW, SYNGR1, NMU, AKR1C3, MLLT3 
+	   CMBL, IL32, ALDH1A1, KLRB1, SMIM10, NKG7, AC245427.1, CCL5, LMNA, CST7 
+	   GZMA, AC100801.1, FXN, MT2A, LINC01133, NME4, B3GALNT1, NDUFS5, LYAR, HSPB1 
+PC_ 5 
+Positive:  NKG7, GZMA, CST7, KLRD1, GNLY, PRF1, CCL5, GZMH, GZMB, FGFBP2 
+	   CTSW, KLRF1, CCL4, SPON2, CLIC3, TRDC, HOPX, KLRB1, IL2RB, XCL2 
+	   FCGR3A, CMC1, PRSS23, RHOC, IFNG, C12orf75, XCL1, FCER1G, PLAC8, AC245427.1 
+Negative:  CNRIP1, FAM178B, APOC1, BPGM, HLA-DRA, SMIM10, IFIT1B, BCL11A, BLVRB, ALDH1A1 
+	   IMPDH2, CYTL1, EPCAM, MYC, IGHM, EGFL7, MEST, CD79A, AC084033.3, EIF1AY 
+	   PRSS57, CMBL, MAP7, PKIG, PAICS, REXO2, AHSP, CD79B, MYB, SLC25A37 
+"
+"0","  "

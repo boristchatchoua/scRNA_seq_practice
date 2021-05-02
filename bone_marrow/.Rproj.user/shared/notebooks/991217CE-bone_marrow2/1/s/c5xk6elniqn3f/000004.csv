@@ -1,0 +1,2 @@
+"0","# here we can visualize the result of the PCA"
+"0","DimPlot(bone_mrw, reduction = ""pca"")"

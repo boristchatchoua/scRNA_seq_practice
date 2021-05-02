@@ -1,0 +1,3 @@
+"0","bone_mrw <- RenameIdents(bone_mrw, new_ids)"
+"0","bone_mrw$cell_type <- Idents(bone_mrw)"
+"0","DimPlot(bone_mrw) "

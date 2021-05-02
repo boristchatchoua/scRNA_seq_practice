@@ -1,0 +1,7 @@
+"0","# we load our data in to the R environment "
+"0","bone.data <- load(""SRA779509_SRS3805257.sparse.RData"")"
+"0","bone.data # check if the data is stored in sparsed matrix sm or sm2"
+"1","[1]"
+"1"," ""sm"""
+"1","
+"

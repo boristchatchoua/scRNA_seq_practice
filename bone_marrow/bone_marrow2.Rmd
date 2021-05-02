@@ -1,0 +1,351 @@
+---
+title: "Bone Marrow v2"
+output:
+  html_document:
+    df_print: paged
+editor_options: 
+  chunk_output_type: inline
+---
+
+```{r}
+library(Seurat)
+library(dplyr)
+library(patchwork)
+library(Matrix)
+library(celldex)
+library(SingleR)
+```
+
+
+First we start by loading the data of the bone marrow (Homo sapiens) into our R environment. This data was obtain by using Illumina HiSeq 3000 and can be found [here](https://panglaodb.se/view_data.php?sra=SRA779509&srs=SRS3805257). The counts of the data are not normalized and the columns contain the cells while the rows have the genes in a sparse matrix ("sm"). 
+```{r}
+# we load our data in to the R environment 
+bone.data <- load("SRA779509_SRS3805257.sparse.RData")
+bone.data # check if the data is stored in sparsed matrix sm or sm2
+```
+```{r}
+# we check the dimensions of the matrix.
+# columns = cells
+# rows = genes 
+dim(sm)
+```
+
+```{r}
+tail(rownames(sm))
+```
+
+
+Given that the names of the genes a long, what we can now do it to shorten the names of the genes so that keep only the first part of the name. This will help with easy identification and reading. 
+```{r}
+rownames(sm) <- sub(pattern="_E.*", replacement = "", x = rownames(sm))
+tail(rownames(sm))
+```
+
+
+Now we can now go on to create and have a look at the "Seurat object". The Seurat object is a class which serves as a container for the storage and manipulation of single-cell data. It contains data (such as count matrix) and analysis (such as PCA).
+```{r}
+# create the seurat object with some parameters
+# min.cell =  minimum number of cells in which a gene can be detected
+# min.features = minimum number of genes that have to be expressed in a cell
+bone_mrw <- CreateSeuratObject(counts = sm, project = "Bone_marrow", min.cells = 3, min.features = 200)
+bone_mrw
+```
+By setting the "min.cells" and "min.features" parameter of the seurat object to 3 and 200 respectively, we retain 5664 cells (samples) and 22160 genes (features) from the initial 8357 cells and 28556 genes. The cells that did not meet our set parameters where discarded. 
+
+
+With the seurat object, we can easily perform quality control (QC) metrics and filter cells.  In this case we perform or calculate mitochondrial QC metrics, which calculates the percentage of counts originating from a set of features.
+The number of unique genes and total molecules -in other words, the QC metrics- are automatically calculated when creating the seurat object by using "CreateSeuratObject" in the meta data (@meta.data). Therefore the mitochondrial QC metrics can be calculated and added as a column in the object metadata.
+
+```{r}
+# we use the "PercentageFeatureSet" function to calculate the mitochondrial QC metrics
+# We use the set of all genes starting with "MT-" as a set of mitochondrial genes.
+# The [[ operator can add columns to object metadata. This is a great place to stash QC stats
+bone_mrw[["percent.mt"]] <- PercentageFeatureSet(bone_mrw, pattern = "^MT-")
+head(bone_mrw@meta.data)
+```
+
+We then visualise the QC metrics
+```{r}
+VlnPlot(bone_mrw, features = c("nFeature_RNA", "nCount_RNA", "percent.mt"), ncol = 3, pt.size = 0)
+```
+
+
+```{r}
+# FeatureScatter is typically used to visualize feature-feature relationships, but can be used
+# for anything calculated by the object, i.e. columns in object metadata, PC scores etc.
+
+plot1 <- FeatureScatter(bone_mrw, feature1 = "nCount_RNA", feature2 = "percent.mt")
+plot2 <- FeatureScatter(bone_mrw, feature1 = "nCount_RNA", feature2 = "nFeature_RNA")
+
+plot1 + plot2
+```
+The plot shows us that the cells that have a low RNA count seem to have a high percentage of mitochrondrial RNA in 1st plot.
+
+
+Next, we filter the data to retain the cells that have at least 200 expressed genes and not more than 5000 genes as well as <15% mitochrondrial counts.
+After removing unwanted cells from the data set, the next step is to normalize the data. By default, Seurat normalizes the gene counts for each cell by the total counts for each cell, multiplies this by a scale factor (10,000 by default), and log-transforms the result. That is, it is log(read per ten thousands). Normalized values are stored in pbmc[["RNA"]]@data.
+Since we want to compare the similarity between the cells at the transcriptional level we have to filter out the gene table and discard those that don't give any useful information while keeping only the most variable genes. 
+The choice is made on the relationship between SD, Var and mean of genes, keeping the top 2000 genes. This means that these 2000 genes are used for the rest of the analysis.
+```{r}
+bone_mrw <- subset(bone_mrw, subset = nFeature_RNA > 200 & nFeature_RNA < 5000 & percent.mt < 15) %>%
+  NormalizeData() %>%
+  FindVariableFeatures()
+```
+
+
+```{r}
+# Identify the 10 most highly variable genes
+top10 <- head(VariableFeatures(bone_mrw), 10)
+
+top10
+```
+
+
+```{r}
+# plot variable features with and without labels
+plot1 <- VariableFeaturePlot(bone_mrw)
+plot2 <- LabelPoints(plot = plot1, points = top10, repel = TRUE, xnudge = 0, ynudge = 0)
+plot1
+plot2
+```
+
+
+The next step is to scale  the counts that came out after normaliazation. This means that it will be a transformation so that for each gene, its count will have mean 0 and Var 1 across all cells. This is a step of "biniarization" because at the end all the values will be 1,0 or -1 according to the fact that the gene is highly, average or lowly expressed in a given cell. Here the original counts are transformed into data matrix that is very close to something that is close to a binary value.
+```{r}
+
+bone_mrw <- ScaleData(bone_mrw) %>%
+  RunPCA()
+  
+```
+
+
+
+```{r}
+VizDimLoadings(bone_mrw, dims = 1:2, reduction = "pca")
+```
+
+```{r}
+# here we can visualize the result of the PCA
+DimPlot(bone_mrw, reduction = "pca")
+```
+
+
+```{r}
+DimPlot(bone_mrw, reduction = "pca", dims = c(3,4))
+```
+
+
+We use the heatmap to visualize the expression of the most variable genes on the most variable cells in any PC selected.
+```{r}
+DimHeatmap(bone_mrw, dims = 1, cells = 500, balanced = TRUE)
+```
+
+```{r}
+DimHeatmap(bone_mrw, dims = 1:9, cells = 500, balanced = TRUE)
+```
+
+We use the  "ElbowPlot" function as a way to determine the number of PCs. This plot shows the standard deviation of each PC. 
+```{r}
+ElbowPlot(bone_mrw, ndims = 40)
+```
+
+
+The next step is the clustering of the cells.
+```{r}
+bone_mrw<- FindNeighbors(bone_mrw, dims=1:25, reduction = "pca") %>%
+  FindClusters(resolution = 0.5) %>%
+  RunUMAP(dims = 1:25)
+DimPlot(bone_mrw,reduction = "pca") # this labels the PCA plot with clusters. Each cluster gets a unique colour
+
+DimPlot(bone_mrw,reduction = "umap", label = TRUE) # visualise the clusters 
+```
+
+
+
+```{r}
+#saveRDS(bone_mrw, file = "./bone_marrow.rds")
+```
+
+
+Find the marker genes of all the clusters. 
+The marker genes are then grouped by clusters and the top 2 genes of each cluster are used to identify the cells type of the cluster.
+```{r}
+bone_mrw.markers <- FindAllMarkers(bone_mrw, only.pos = TRUE, min.pct = 0.25, logfc.threshold = 0.25)
+bone_mrw.markers %>% group_by(cluster) %>%
+  top_n(n = 4, wt = avg_log2FC)
+```
+
+
+
+```{r}
+# we get the number of cells in each cluster 
+cell.num <- table(Idents(bone_mrw))
+cell.num
+```
+
+Automated cell type classification. 
+```{r}
+# classification is done using NovershternHematopoieticData from celldex
+ref <- NovershternHematopoieticData()
+```
+
+```{r}
+#N.B need to install SingleCellExperiment from Bioconductor before converting to a SingeCellExperiment object
+scbone_mrw <- as.SingleCellExperiment(bone_mrw)
+pred.scbone_mrw <- SingleR(test = scbone_mrw, 
+                     ref = ref, 
+                     labels = ref$label.main)
+plotScoreHeatmap(pred.scbone_mrw,
+                 clusters = bone_mrw$seurat_clusters,
+                 order.by = "clusters",
+                 show_colnames = FALSE)
+```
+
+```{r}
+# Add the predicted labels and compare to clusters
+# You are looking for clusters which have unambiguous labels
+bone_mrw$predicted_id <- pred.scbone_mrw$pruned.labels
+table(bone_mrw$predicted_id, bone_mrw$seurat_clusters)
+
+```
+
+
+Using Featureplots and violinplot to see the expression of the top 2 marker genes of each cluster.
+```{r}
+# cluster 1
+FeaturePlot(bone_mrw, features = c("LTB", "TRAC"))
+VlnPlot(bone_mrw, features = c("LTB", "TRAC") )
+```
+
+
+```{r}
+# cluster 1
+FeaturePlot(bone_mrw, features = c("HBA1", "HBA2"))
+VlnPlot(bone_mrw, features = c("HBA1", "HBA2"))
+```
+
+```{r}
+# cluster 2
+FeaturePlot(bone_mrw, features = c("S100A8", "S100A9"))
+VlnPlot(bone_mrw, features = c("S100A8", "S100A9"))
+```
+
+```{r}
+# cluster 3
+FeaturePlot(bone_mrw, features = c("CA1", "HBM"))
+VlnPlot(bone_mrw, features = c("CA1", "HBM"))
+```
+
+```{r}
+# cluster 4
+FeaturePlot(bone_mrw, features = c("NKG7", "GNLY"))
+VlnPlot(bone_mrw, features = c("NKG7", "GNLY"))
+```
+
+```{r}
+# cluster 5
+FeaturePlot(bone_mrw, features = c("CA1", "HBM"))
+VlnPlot(bone_mrw, features = c("CA1", "HBM"))
+```
+
+```{r}
+# cluster 6
+FeaturePlot(bone_mrw, features = c("EIF5A", "HNRNPH1"))
+VlnPlot(bone_mrw, features = c("EIF5A", "HNRNPH1"))
+```
+
+```{r}
+# cluster 7
+FeaturePlot(bone_mrw, features = c("TNFRSF13C", "CD74"))
+VlnPlot(bone_mrw, features = c("TNFRSF13C", "CD74"))
+```
+
+```{r}
+# cluster 8
+FeaturePlot(bone_mrw, features = c("CCL5", "IL32"))
+VlnPlot(bone_mrw, features = c("CCL5", "IL32"))
+```
+
+```{r}
+# cluster 9
+FeaturePlot(bone_mrw, features = c("PRTN3", "MPO"))
+VlnPlot(bone_mrw, features = c("PRTN3", "MPO"))
+```
+
+```{r}
+# cluster 10
+FeaturePlot(bone_mrw, features = c("CD79B", "IGHM"))
+VlnPlot(bone_mrw, features = c("CD79B", "IGHM"))
+```
+
+```{r}
+# cluster 11
+FeaturePlot(bone_mrw, features = c("IGHA2", "IGHG1"))
+VlnPlot(bone_mrw, features = c("IGHA2", "IGHG1"))
+```
+
+```{r}
+# cluster 12
+FeaturePlot(bone_mrw, features = c("IGLL1", "STMN1"))
+VlnPlot(bone_mrw, features = c("IGLL1", "STMN1"))
+```
+
+
+```{r}
+# cluster 13
+FeaturePlot(bone_mrw, features = c("FCGR3A", "LST1"))
+VlnPlot(bone_mrw, features = c("FCGR3A", "LST1"))
+```
+
+```{r}
+# cluster 14
+FeaturePlot(bone_mrw, features = c("DNTT", "VPREB3"))
+VlnPlot(bone_mrw, features = c("DNTT", "VPREB3"))
+```
+
+
+```{r}
+# cluster 15
+FeaturePlot(bone_mrw, features = c("IRF8", "JCHAIN"))
+VlnPlot(bone_mrw, features = c("IRF8", "JCHAIN"))
+```
+
+
+```{r}
+# Select final IDs
+new_ids <- c(
+  "0" = "CD4 + T Cells",
+  "1" = "Erythroid cells",
+  "2" = "Monocytes",
+  "3" = "Erythroid cells",
+  "4" = "NK Cells",
+  "5" = "Erythroid cells",
+  "6" = "Erythroid cells",
+  "7" = "B Cells",
+  "8" = "CD8+ T cells",
+  "9" = "Unknown",
+  "10" = "B Cells",
+  "11" = "Unknown",
+  "12" = "B Cells",
+  "13" = "Monocytes",
+  "14" = "B Cells",
+  "15" = "Dendritic cells"
+) 
+```
+
+
+```{r}
+bone_mrw <- RenameIdents(bone_mrw, new_ids)
+bone_mrw$cell_type <- Idents(bone_mrw)
+DimPlot(bone_mrw) 
+DimPlot(bone_mrw, label.size = 5, label = TRUE) + NoLegend()
+```
+
+```{r}
+sig_markers <- bone_mrw.markers %>% 
+  filter(p_val_adj < .05)
+
+## Part 2a: Pathway enrichment online in enrichr: https://maayanlab.cloud/Enrichr/ ##
+write.csv(sig_markers, file = "bone_mrw_sig_markers.csv")
+```
+

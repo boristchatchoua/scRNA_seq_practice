@@ -1,0 +1,28 @@
+{
+    "id": "AA277DF8",
+    "path": null,
+    "project_path": null,
+    "type": "object_explorer",
+    "hash": "0",
+    "contents": "",
+    "dirty": false,
+    "created": 1618934898366.0,
+    "source_on_save": false,
+    "relative_order": 3,
+    "properties": {
+        "id": "03f4ddad556a43c0971146ab6f1e2994",
+        "name": "bone_mrw",
+        "title": "bone_mrw",
+        "language": "R",
+        "source_window_id": "",
+        "Source": "Source"
+    },
+    "folds": "",
+    "lastKnownWriteTime": 27866022701695085,
+    "encoding": "",
+    "collab_server": "",
+    "source_window": "",
+    "last_content_update": 1618934898366,
+    "read_only": false,
+    "read_only_alternatives": []
+}
