@@ -1,5 +1,0 @@
-"0","# we use the ""PercentageFeatureSet"" function to calculate the mitochondrial QC metrics"
-"0","# We use the set of all genes starting with ""MT-"" as a set of mitochondrial genes."
-"0","# The [[ operator can add columns to object metadata. This is a great place to stash QC stats"
-"0","bone_mrw[[""percent.mt""]] <- PercentageFeatureSet(bone_mrw, pattern = ""^MT-"")"
-"0","head(bone_mrw@meta.data)"
